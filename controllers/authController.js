@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { generateToken } from '../utils/jwtUtils.js';
-import { lookupUser, countUsers, addUser } from '../utils/dbUtils.js';
+import { lookupUser, countUsers, addUser } from '../models/users.js';
 
 class AuthController {
 

@@ -1,4 +1,4 @@
-import { getConfig, setConfigItem } from '../utils/dbUtils.js';
+import { configModel, updateBackendPort } from '../models/config.js';
 
 class Config {
   constructor (async_param) {
@@ -8,14 +8,15 @@ class Config {
     async_param.forEach(row => {
       switch (row.config_item) {
         case 'backend_port':
-          this.backend_port = row.config_value;
+          this.backend_port = +row.config_value;
           break;
       }
     });
   }
 
   static async build() {
-    const rows = await getConfig();
+    await configModel.sync();
+    const rows = await configModel.findAll();
     return new Config(rows);
   }
 
@@ -23,9 +24,11 @@ class Config {
     return this.backend_port;
   }
 
-  setBackendPort(backend_port) {
-    this.backend_port = backend_port;
-    return setConfigItem('backend_port', backend_port);
+  async setBackendPort(backend_port) {
+    if (this.backend_port !== backend_port) {
+      this.backend_port = backend_port;
+      return await updateBackendPort(backend_port);
+    }
   }
 };
 
